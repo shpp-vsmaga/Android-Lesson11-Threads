@@ -6,10 +6,12 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,13 +30,14 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Button btnDownload;
     private static final String LOG_TAG = "svcom";
     private static LinearLayout linearLayout;
     private EditText edtRequest;
     private static final int MIN_POOL_SIZE = 5;
     private static final int MAX_POOL_SIZE = 5;
     private static final long KEEP_ALIVE_TIME = 60L;
+    private static final int IMAGE_VIEW_PADDING = 16;
+    private static final int NUMBER_OF_PICTURES = 30;
     private ThreadPoolExecutor threadPool;
 
     @Override
@@ -42,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         edtRequest = (EditText)findViewById(R.id.edtRequest);
-        //btnDownload = (Button) findViewById(R.id.btnDownload);
         linearLayout = (LinearLayout) findViewById(R.id.linLayoutImages);
-        //catsUrlList = loadCatsUrlList(catsFile);
         threadPool = new ThreadPoolExecutor(MIN_POOL_SIZE,
                 MAX_POOL_SIZE,
                 KEEP_ALIVE_TIME,
@@ -52,47 +53,17 @@ public class MainActivity extends AppCompatActivity {
                 new LinkedBlockingQueue<Runnable>());
     }
 
-//    private ArrayList<String> loadCatsUrlList(String catsFile) {
-//        ArrayList<String> catsUrls = new ArrayList<>();
-//        String line;
-//        try {
-//            BufferedReader br = new BufferedReader(new InputStreamReader(getApplicationContext().getAssets().
-//                    open(catsFile)));
-//
-//            line = br.readLine();
-//            while (line != null) {
-//                catsUrls.add(line);
-//                line = br.readLine();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return catsUrls;
-//    }
 
     public void btnSearchOnClick(View view) {
 
-//        if (connectionIsAvailable()) {
-//            for (final String url : catsUrlList) {
-//                threadPool.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        loadPictureFromUrl(url);
-//                    }
-//                });
-//            }
-//        }
         String requestStr = edtRequest.getText().toString();
 
         if (connectionIsAvailable() && !requestStr.isEmpty()){
             linearLayout.removeAllViews();
-            new LoadUrlsTask().execute(requestStr, "20");
+            new LoadUrlsTask().execute(requestStr, String.valueOf(NUMBER_OF_PICTURES));
         }
     }
 
-//    public void btnClearOnClick(View view) {
-//        linearLayout.removeAllViews();
-//    }
 
     public void loadPictures(ArrayList<String> urls) {
         if (connectionIsAvailable()) {
@@ -105,19 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }
-    }
-
-    private boolean connectionIsAvailable() {
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = connManager.getActiveNetworkInfo();
-
-//        if (netInfo != null && netInfo.isConnected()) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-
-        return netInfo != null && netInfo.isConnected();
     }
 
     private void loadPictureFromUrl(String picUrl) {
@@ -138,6 +96,14 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(changeBitmapRunnable);
     }
 
+    private boolean connectionIsAvailable() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connManager.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnected();
+    }
+
+
+
     private class LoadUrlsTask extends AsyncTask<String, Void, ArrayList<String>>{
 
         @Override
@@ -151,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<String> urls) {
-            //super.onPostExecute(aVoid);
             loadPictures(urls);
         }
     }
@@ -168,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
             if (bitmap != null) {
                 ImageView imageView = new ImageView(getApplicationContext());
                 imageView.setImageBitmap(bitmap);
+                imageView.setPadding(IMAGE_VIEW_PADDING,IMAGE_VIEW_PADDING,
+                        IMAGE_VIEW_PADDING,IMAGE_VIEW_PADDING);
                 linearLayout.addView(imageView);
             }
         }

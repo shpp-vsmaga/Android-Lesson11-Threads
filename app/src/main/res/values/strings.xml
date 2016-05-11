@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PictureLoader</string>
+    <string name="btnDownloadLabel">Download</string>
+    <string name="btnClearLabel">Clear</string>
+</resources>

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -27,11 +28,10 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnDownload;
+    //Button btnDownload;
     private static final String LOG_TAG = "svcom";
-    private static final String catsFile = "cats.txt";
-    private ArrayList<String> catsUrlList;
     private static LinearLayout linearLayout;
+    private EditText edtRequest;
     private static final int MIN_POOL_SIZE = 5;
     private static final int MAX_POOL_SIZE = 5;
     private static final long KEEP_ALIVE_TIME = 60L;
@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        btnDownload = (Button) findViewById(R.id.btnDownload);
+        edtRequest = (EditText)findViewById(R.id.edtRequest);
+        //btnDownload = (Button) findViewById(R.id.btnDownload);
         linearLayout = (LinearLayout) findViewById(R.id.linLayoutImages);
-        catsUrlList = loadCatsUrlList(catsFile);
+        //catsUrlList = loadCatsUrlList(catsFile);
         threadPool = new ThreadPoolExecutor(MIN_POOL_SIZE,
                 MAX_POOL_SIZE,
                 KEEP_ALIVE_TIME,
@@ -52,25 +52,25 @@ public class MainActivity extends AppCompatActivity {
                 new LinkedBlockingQueue<Runnable>());
     }
 
-    private ArrayList<String> loadCatsUrlList(String catsFile) {
-        ArrayList<String> catsUrls = new ArrayList<>();
-        String line;
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(getApplicationContext().getAssets().
-                    open(catsFile)));
+//    private ArrayList<String> loadCatsUrlList(String catsFile) {
+//        ArrayList<String> catsUrls = new ArrayList<>();
+//        String line;
+//        try {
+//            BufferedReader br = new BufferedReader(new InputStreamReader(getApplicationContext().getAssets().
+//                    open(catsFile)));
+//
+//            line = br.readLine();
+//            while (line != null) {
+//                catsUrls.add(line);
+//                line = br.readLine();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return catsUrls;
+//    }
 
-            line = br.readLine();
-            while (line != null) {
-                catsUrls.add(line);
-                line = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return catsUrls;
-    }
-
-    public void btnDownloadOnClick(View view) {
+    public void btnSearchOnClick(View view) {
 
 //        if (connectionIsAvailable()) {
 //            for (final String url : catsUrlList) {
@@ -82,16 +82,17 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //            }
 //        }
+        String requestStr = edtRequest.getText().toString();
 
-
-        if (connectionIsAvailable()){
-            new LoadUrlsTask().execute("dog", "50");
+        if (connectionIsAvailable() && !requestStr.isEmpty()){
+            linearLayout.removeAllViews();
+            new LoadUrlsTask().execute(requestStr, "20");
         }
     }
 
-    public void btnClearOnClick(View view) {
-        linearLayout.removeAllViews();
-    }
+//    public void btnClearOnClick(View view) {
+//        linearLayout.removeAllViews();
+//    }
 
     public void loadPictures(ArrayList<String> urls) {
         if (connectionIsAvailable()) {
@@ -110,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connManager.getActiveNetworkInfo();
 
-        if (netInfo != null && netInfo.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
+//        if (netInfo != null && netInfo.isConnected()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+
+        return netInfo != null && netInfo.isConnected();
     }
 
     private void loadPictureFromUrl(String picUrl) {

@@ -4,26 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.sv.pictureloader.MainActivity"
     android:background="@drawable/background_hd">
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnDownloadLabel"
-        android:id="@+id/btnDownload"
-        android:onClick="btnDownloadOnClick" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btnClearLabel"
-        android:id="@+id/btnClear"
-        android:onClick="btnClearOnClick"
-        android:layout_alignParentRight="true" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,8 +15,46 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/linLayoutImages">
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:background="@color/colorTopBackground"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtRequest"
+                    android:layout_weight="1.00"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:hint="@string/edtRequestHint"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/secondary_text_light_nodisable" />
+
+                <Button
+                    android:layout_width="43dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@android:drawable/ic_menu_search"
+                    android:id="@+id/btnSearch"
+                    android:background="@null"
+                    android:layout_weight="0.01"
+                    android:onClick="btnSearchOnClick" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/linLayoutImages">
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

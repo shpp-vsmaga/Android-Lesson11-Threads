@@ -1,10 +1,10 @@
 package com.example.sv.pictureloader;
 
-import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
+//import android.content.Context;
+//import android.graphics.BitmapFactory;
+//import android.net.ConnectivityManager;
+//import android.net.NetworkInfo;
+//import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,13 +13,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+//import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import com.example.sv.pictureloader.MainActivity;
+//import com.example.sv.pictureloader.MainActivity;
 
 /**
  * Created by SV on 08.05.2016.

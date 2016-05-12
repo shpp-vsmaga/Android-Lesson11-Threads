@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initSnackBar() {
         snackbar = Snackbar.make(btnSearch, progressText, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setActionTextColor(Color.WHITE);
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
         snackbarLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ProgressBar progressBar = new ProgressBar(this);

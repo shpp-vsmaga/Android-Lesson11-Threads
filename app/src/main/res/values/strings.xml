@@ -6,4 +6,7 @@
     <string name="notConnected">No internet connection!!!</string>
     <string name="emptyRequest">"Empty request!!!</string>
     <string name="downloading">"Downloading pictures "</string>
+    <string name="minutes">min</string>
+    <string name="seconds">sec</string>
+    <string name="timeLeft">"Time left "</string>
 </resources>

@@ -6,21 +6,18 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,22 +27,31 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "svcom";
-    private static LinearLayout linearLayout;
+    private static LinearLayout leftPictureLayout;
+    private static LinearLayout rightPictureLayout;
     private EditText edtRequest;
     private static final int MIN_POOL_SIZE = 5;
     private static final int MAX_POOL_SIZE = 5;
     private static final long KEEP_ALIVE_TIME = 60L;
     private static final int IMAGE_VIEW_PADDING = 16;
-    private static final int NUMBER_OF_PICTURES = 30;
+    private static final int NUMBER_OF_PICTURES = 100;
     private ThreadPoolExecutor threadPool;
+    private Button btnSearch;
+    private Snackbar snackbar;
+    private volatile int downloadedPictures = 0;
+    private volatile int picturesInQueue = 0;
+    private String progressText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         edtRequest = (EditText)findViewById(R.id.edtRequest);
-        linearLayout = (LinearLayout) findViewById(R.id.linLayoutImages);
+        leftPictureLayout = (LinearLayout) findViewById(R.id.leftImages);
+        rightPictureLayout = (LinearLayout) findViewById(R.id.rightImages);
+        btnSearch = (Button)findViewById(R.id.btnSearch);
+        progressText = getResources().getString(R.string.downloading);
         threadPool = new ThreadPoolExecutor(MIN_POOL_SIZE,
                 MAX_POOL_SIZE,
                 KEEP_ALIVE_TIME,
@@ -53,25 +59,45 @@ public class MainActivity extends AppCompatActivity {
                 new LinkedBlockingQueue<Runnable>());
     }
 
+    private void initSnackBar() {
+        snackbar = Snackbar.make(btnSearch, progressText, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Action", null);
+        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
+        snackbarLayout.addView(new ProgressBar(this));
+        snackbar.show();
+    }
+
 
     public void btnSearchOnClick(View view) {
 
         String requestStr = edtRequest.getText().toString();
 
-        if (connectionIsAvailable() && !requestStr.isEmpty()){
-            linearLayout.removeAllViews();
-            new LoadUrlsTask().execute(requestStr, String.valueOf(NUMBER_OF_PICTURES));
+        if (connectionIsAvailable()){
+            if (!requestStr.isEmpty()) {
+                leftPictureLayout.removeAllViews();
+                rightPictureLayout.removeAllViews();
+                new LoadUrlsTask().execute(requestStr, String.valueOf(NUMBER_OF_PICTURES));
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.emptyRequest), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.notConnected), Toast.LENGTH_SHORT).show();
         }
+
     }
 
 
+
+
     public void loadPictures(ArrayList<String> urls) {
+        picturesInQueue = urls.size();
         if (connectionIsAvailable()) {
             for (final String url : urls) {
                 threadPool.execute(new Runnable() {
                     @Override
                     public void run() {
                         loadPictureFromUrl(url);
+
                     }
                 });
             }
@@ -108,11 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-
             Flickr flickr = new Flickr();
-            Log.d(LOG_TAG, "secondParam - " + Integer.parseInt(params[1]));
-            ArrayList<String> urlsList = flickr.search(params[0], Integer.parseInt(params[1]));
-            return urlsList;
+            return flickr.search(params[0], Integer.parseInt(params[1]));
         }
 
         @Override
@@ -131,11 +154,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (bitmap != null) {
+                ++downloadedPictures;
                 ImageView imageView = new ImageView(getApplicationContext());
                 imageView.setImageBitmap(bitmap);
-                imageView.setPadding(IMAGE_VIEW_PADDING,IMAGE_VIEW_PADDING,
-                        IMAGE_VIEW_PADDING,IMAGE_VIEW_PADDING);
-                linearLayout.addView(imageView);
+                imageView.setPadding(IMAGE_VIEW_PADDING, IMAGE_VIEW_PADDING,
+                        IMAGE_VIEW_PADDING, IMAGE_VIEW_PADDING);
+                if (downloadedPictures % 2 == 0) {
+                    leftPictureLayout.addView(imageView);
+                } else {
+                    rightPictureLayout.addView(imageView);
+                }
+                updateProgress();
+            }
+        }
+
+        private void updateProgress(){
+            if (snackbar == null || !snackbar.isShown()){
+                initSnackBar();
+            }
+
+            snackbar.setText(progressText + String.valueOf(downloadedPictures)
+                    + "/" + String.valueOf(picturesInQueue) );
+            if (downloadedPictures == picturesInQueue){
+                snackbar.dismiss();
+                picturesInQueue = downloadedPictures = 0;
             }
         }
     }

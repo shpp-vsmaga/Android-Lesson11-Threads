@@ -2,5 +2,8 @@
     <string name="app_name">PictureLoader</string>
     <string name="btnDownloadLabel">Download</string>
     <string name="btnClearLabel">Clear</string>
-    <string name="edtRequestHint">Find pictures...</string>
+    <string name="edtRequestHint">Find pictures</string>
+    <string name="notConnected">No internet connection!!!</string>
+    <string name="emptyRequest">"Empty request!!!</string>
+    <string name="downloading">"Downloading pictures "</string>
 </resources>

@@ -64,8 +64,9 @@ public class Flickr {
 
     private String filterResponseStr(String responseStr){
         String jsonStr = "";
+
         if (!responseStr.isEmpty()){
-            jsonStr = responseStr.substring(responseStr.indexOf("{"), responseStr.length() - 1);
+            jsonStr = responseStr.substring(responseStr.indexOf("{"), responseStr.lastIndexOf("}") + 1);
         }
         return jsonStr;
     }
@@ -82,7 +83,7 @@ public class Flickr {
                 String server = picture.getString("server");
                 String id = picture.getString("id");
                 String secret = picture.getString("secret");
-                String pictureUrl = String.format("https://farm%s.staticflickr.com/%s/%s_%s.jpg",
+                String pictureUrl = String.format("https://farm%s.staticflickr.com/%s/%s_%s_n.jpg",
                         farm, server, id, secret);
                 list.add(pictureUrl);
             }

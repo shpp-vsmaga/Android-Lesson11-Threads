@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        changeBitmapRunnable changeBitmapRunnable = new changeBitmapRunnable(result);
-        runOnUiThread(changeBitmapRunnable);
+        addBitmapRunnable addBitmapRunnable = new addBitmapRunnable(result);
+        runOnUiThread(addBitmapRunnable);
     }
 
     private boolean connectionIsAvailable() {
@@ -144,10 +144,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class changeBitmapRunnable implements Runnable {
+    private class addBitmapRunnable implements Runnable {
         private Bitmap bitmap;
 
-        changeBitmapRunnable(final Bitmap bitmap) {
+        addBitmapRunnable(final Bitmap bitmap) {
             this.bitmap = bitmap;
         }
 
